@@ -1,39 +1,86 @@
-# React Truffle Box
+# Chat Safe
 
-This box comes with everything you need to start using Truffle to write, compile, test, and deploy smart contracts, and interact with them from a React app.
+Chat Safe is a secure decentralized chat application built on Ethereum blockchain. It allows users to create accounts, add friends, and send encrypted messages to each other, ensuring privacy and security.
 
-## Installation
+## Features
 
-First ensure you are in an empty directory.
+- **Account Creation**: Users can create accounts with a username and password.
+- **Friend Management**: Add friends using their usernames.
+- **Messaging**: Send and receive messages with friends securely.
+- **Account Management**: Update or delete your account.
+- **Username Display**: Usernames are displayed alongside public addresses for better readability.
 
-Run the `unbox` command using 1 of 2 ways.
+## Technologies Used
 
-```sh
-# Install Truffle globally and run `truffle unbox`
-$ npm install -g truffle
-$ truffle unbox react
-```
+- **Solidity**: Smart contract development.
+- **React**: Frontend development.
+- **Web3.js**: Interaction with Ethereum blockchain.
+- **Truffle**: Development environment for Ethereum.
+- **MetaMask**: Ethereum wallet and browser extension.
+- **Material-UI**: UI components.
 
-```sh
-# Alternatively, run `truffle unbox` via npx
-$ npx truffle unbox react
-```
+## Getting Started
 
-Start the react dev server.
+### Prerequisites
 
-```sh
-$ cd client
-$ npm start
-```
+- Node.js
+- Truffle
+- MetaMask extension in your browser
+- Ethereum client (Ganache, Infura, etc.)
 
-From there, follow the instructions on the hosted React app. It will walk you through using Truffle and Ganache to deploy the `SimpleStorage` contract, making calls to it, and sending transactions to change the contract's state.
+### Installation
 
-## FAQ
+1. **Clone the repository**
 
-- __How do I use this with Ganache (or any other network)?__
+   ```sh
+   git clone https://github.com/Priyanshrai/Dapp_Chat_Safe.git
+   cd chat-safe
+   ```
 
-  The Truffle project is set to deploy to Ganache by default. If you'd like to change this, it's as easy as modifying the Truffle config file! Check out [our documentation on adding network configurations](https://trufflesuite.com/docs/truffle/reference/configuration/#networks). From there, you can run `truffle migrate` pointed to another network, restart the React dev server, and see the change take place.
+2. **Install dependencies**
 
-- __Where can I find more resources?__
+   ```sh
+   cd truffle
+   npm install
+   cd ../client
+   npm install
+   ```
 
-  This Box is a sweet combo of [Truffle](https://trufflesuite.com) and [Webpack](https://webpack.js.org). Either one would be a great place to start!
+3. **Compile the smart contracts**
+
+   ```sh
+   cd truffle
+   truffle compile
+   ```
+
+4. **Deploy the smart contracts**
+
+   ```sh
+   truffle migrate
+   ```
+
+5. **Run the frontend application**
+
+   ```sh
+   cd ../client
+   npm start
+   ```
+
+## Usage
+
+1. **Open MetaMask and connect to your Ethereum network.**
+2. **Access the application at `http://localhost:8080`.**
+3. **Create your account by entering a username and password.**
+4. **Add friends by entering their usernames.**
+5. **Select a friend from your friend list and start chatting!**
+
+## Smart Contract
+
+The smart contract handles user account creation, friend management, and messaging. It ensures that messages are securely stored and can only be accessed by the sender and receiver.
+ndAddress != address(0), "User not found");
+
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request or open an issue to discuss changes.
+
