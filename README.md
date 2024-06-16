@@ -2,6 +2,9 @@
 
 Chat Safe is a secure decentralized chat application built on Ethereum blockchain. It allows users to create accounts, add friends, and send encrypted messages to each other, ensuring privacy and security.
 
+![Chat_Safe](https://github.com/Priyanshrai/Dapp_Chat_Safe/assets/105690577/9c0d7d68-db95-45b1-838d-c05181c84588)
+
+
 ## Features
 
 - **Account Creation**: Users can create accounts with a username and password.
