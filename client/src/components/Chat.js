@@ -7,6 +7,16 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Alert from '@mui/material/Alert';
 
 const Container = styled.div`
   max-width: 800px;
@@ -14,24 +24,28 @@ const Container = styled.div`
   padding: 20px;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const HeaderContainer = styled(AppBar)`
+  background-color: #3f51b5;
+  margin-bottom: 20px;
+`;
+
+const Title = styled(Typography)`
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
 `;
 
 const AccountInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+`;
+
+const Username = styled(Typography)`
+  margin-right: 10px;
+  font-weight: bold;
 `;
 
 const Section = styled.section`
-  margin-bottom: 20px;
-`;
-
-const Title = styled.h2`
-  text-align: center;
   margin-bottom: 20px;
 `;
 
@@ -51,22 +65,25 @@ const Input = styled(TextField)`
   }
 `;
 
-const List = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const ListItem = styled.li`
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
-`;
+const Header = ({ account, username }) => {
+  return (
+    <HeaderContainer position="static">
+      <Toolbar>
+        <Title variant="h6">Chat Safe</Title>
+        <AccountInfo>
+          <Username variant="body1">{username}</Username>
+          <IconButton color="inherit">
+            <Avatar alt={username} />
+          </IconButton>
+          <Typography variant="body2">{account}</Typography>
+          <IconButton color="inherit">
+            <AccountCircle />
+          </IconButton>
+        </AccountInfo>
+      </Toolbar>
+    </HeaderContainer>
+  );
+};
 
 const Chat = () => {
   const { account, chatContract } = useContext(BlockchainContext);
@@ -81,6 +98,7 @@ const Chat = () => {
   const [userExists, setUserExists] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [accountHolderUsername, setAccountHolderUsername] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadFriends = async () => {
@@ -119,11 +137,17 @@ const Chat = () => {
   const handleAddFriend = async (friendUsername) => {
     if (chatContract) {
       try {
-        await chatContract.methods.addFriend(friendUsername).send({ from: account });
         const friendAddress = await chatContract.methods.usernames(friendUsername).call();
+        if (!friendAddress || friendAddress === '0x0000000000000000000000000000000000000000') {
+          setError('User not found');
+          return;
+        }
+        await chatContract.methods.addFriend(friendUsername).send({ from: account });
         setFriends([...friends, { address: friendAddress, username: friendUsername }]);
+        setError('');
       } catch (error) {
         console.error('Error adding friend:', error);
+        setError('Failed to add friend');
       }
     }
   };
@@ -174,7 +198,7 @@ const Chat = () => {
   const handleDeleteAccount = async () => {
     if (chatContract) {
       try {
-        await chatContract.methods.deleteAccount(username).send({ from: account });
+        await chatContract.methods.deleteAccount(accountHolderUsername).send({ from: account });
         setUserExists(false);
         setAccountHolderUsername('');
         console.log('Account deleted successfully');
@@ -183,6 +207,7 @@ const Chat = () => {
       }
     }
   };
+  
 
   const handleUpdateUsername = async () => {
     if (chatContract) {
@@ -217,13 +242,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header>
-        <Title>Chat Application</Title>
-        <AccountInfo>
-          <div>{accountHolderUsername}</div>
-          <div>{account}</div>
-        </AccountInfo>
-      </Header>
+      <Header account={account} username={accountHolderUsername} />
       <Section>
         {!userExists && (
           <Form>
@@ -279,10 +298,11 @@ const Chat = () => {
       </Section>
       <Section>
         <SubTitle>Friends</SubTitle>
+        {error && <Alert severity="error">{error}</Alert>}
         <List>
           {friends.map((friend, index) => (
             <ListItem key={index} onClick={() => handleSelectFriend(friend)}>
-              {friend.username} ({friend.address})
+              <ListItemText primary={`${friend.username} (${friend.address})`} />
             </ListItem>
           ))}
         </List>
@@ -299,7 +319,14 @@ const Chat = () => {
         <List>
           {messages.map((msg, index) => (
             <ListItem key={index}>
-              <strong>{msg.senderUsername} ({msg.sender})</strong>: {msg.content} <em>{new Date(msg.timestamp * 1000).toLocaleString()}</em>
+              <ListItemText
+                primary={
+                  <>
+                    <strong>{msg.senderUsername} ({msg.sender})</strong>: {msg.content}
+                  </>
+                }
+                secondary={new Date(msg.timestamp * 1000).toLocaleString()}
+              />
             </ListItem>
           ))}
         </List>
